@@ -75,10 +75,10 @@ export function DashboardShell() {
             })
           );
         } else {
-          setItems(initialItems);
+          setItems([]);
         }
       } catch {
-        setItems(initialItems);
+        setItems([]);
       } finally {
         setLoading(false);
       }
@@ -92,13 +92,16 @@ export function DashboardShell() {
     try {
       const res = await fetch(`/api/resumes/${id}`, { method: "DELETE" });
       if (!res.ok) {
-        const data = await res.json();
+        const data = await res.json().catch(() => ({}));
         console.error("[Delete Resume] Failed:", data);
+        alert(`Failed to delete resume: ${data.message || data.error || data.details || 'Unknown error'}`);
         // Revert UI — the delete didn't actually work
         setItems(previousItems);
       }
-    } catch {
+    } catch (err: unknown) {
       // Network error — revert
+      console.error("[Delete Resume] Network error:", err);
+      alert("Network error: Could not reach the server.");
       setItems(previousItems);
     }
   }, [items]);
