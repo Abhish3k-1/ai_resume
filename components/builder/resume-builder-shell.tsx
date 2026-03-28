@@ -770,21 +770,29 @@ export function ResumeBuilderShell() {
               const isEnabled = isAlwaysOn || sectionToggles[section.id];
 
               return (
-                <button
-                  key={`mobile-nav-${section.id}`}
-                  type="button"
-                  onClick={() => scrollToSection(section.id)}
-                  className={cn(
-                    "flex shrink-0 items-center gap-2 rounded-full border px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium transition-colors cursor-pointer",
-                    isActive
-                      ? "border-primary/50 bg-primary/15 text-primary"
-                      : "border-border/60 bg-surface/50 text-foreground/70 hover:bg-surface-muted hover:text-foreground",
-                    !isEnabled && "opacity-50"
+                <div key={`mobile-nav-${section.id}`} className={cn("flex shrink-0 items-center overflow-hidden rounded-full border transition-colors", isActive ? "border-primary/50 bg-primary/15" : "border-border/60 bg-surface/50", !isEnabled && "opacity-50 grayscale")}>
+                  <button
+                    type="button"
+                    onClick={() => scrollToSection(section.id)}
+                    className={cn("flex items-center gap-2 pl-3 sm:pl-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium transition-colors cursor-pointer", isActive ? "text-primary" : "text-foreground/70 hover:text-foreground", isAlwaysOn ? "pr-3 sm:pr-4" : "pr-1.5")}
+                  >
+                    <Icon size={14} />
+                    {section.label}
+                  </button>
+                  {!isAlwaysOn && (
+                     <button
+                       type="button"
+                       onClick={(e) => {
+                         e.stopPropagation();
+                         handleToggleSection(section.id);
+                       }}
+                       className="flex h-full items-center justify-center pr-3 pl-1.5 py-1.5 sm:py-2 text-foreground/40 hover:text-foreground transition-colors"
+                       title={isEnabled ? "Hide Section" : "Show Section"}
+                     >
+                       <div className={cn("h-3 w-3 rounded-full border transition-colors", isEnabled ? "bg-primary border-primary shadow-sm" : "bg-transparent border-foreground/30")} />
+                     </button>
                   )}
-                >
-                  <Icon size={14} />
-                  {section.label}
-                </button>
+                </div>
               );
             })}
           </nav>

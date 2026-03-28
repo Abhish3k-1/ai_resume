@@ -10,10 +10,12 @@ const generateSkillsSchema = z.object({
 
 const SYSTEM_PROMPT = `You are an expert career coach and technical recruiter. Given a specific job role or headline, your task is to instantly generate the most highly-sought after Technical Skills and Soft Skills for that position in today's job market.
 
-Return ONLY a valid JSON object with EXACTLY this structure, no markdown, no code fences, no explanations:
+Return ONLY a valid JSON object with EXACTLY this structure, no markdown, no code fences, no explanations. 
+DO NOT mix soft skills into the technical field, and DO NOT mix technical skills into the soft field.
+
 {
-  "technical": "Comma-separated list of 10-15 top technical skills for this role",
-  "soft": "Comma-separated list of 5-8 top soft skills for this role"
+  "technical": "Comma-separated list of exactly 10-15 top hard TECHNICAL skills (e.g. React, Python, Figma). NEVER include soft skills here.",
+  "soft": "Comma-separated list of exactly 5-8 top SOFT skills (e.g. Leadership, Communication). NEVER include technical tools here."
 }`;
 
 export async function POST(request: Request) {
