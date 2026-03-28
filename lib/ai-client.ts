@@ -48,14 +48,12 @@ export async function callAI(
     const content = data?.choices?.[0]?.message?.content;
     if (!content) throw new Error("Empty response from Groq API");
     
-    // DEBUG: write the raw result so we know WHY it fails JSON parsing if it does
-    require("fs").writeFileSync("dbg-ai-raw-response.txt", content);
+    // DEBUG log to terminal instead of file system (which breaks Vercel)
     console.log(`[AI] ✅ Success response from Groq`);
     return content;
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     console.error(`[AI] Error calling Groq API: ${msg}`);
-    require("fs").writeFileSync("dbg-failed.txt", msg);
     throw new Error(`AI generation failed: ${msg}`);
   } finally {
     clearTimeout(timeout);
