@@ -761,6 +761,34 @@ export function ResumeBuilderShell() {
             </div>
           </header>
 
+          {/* ── Mobile Section Navigation ── */}
+          <nav className="xl:hidden -mt-2 mb-6 flex overflow-x-auto gap-2 pb-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none'] print:hidden">
+            {builderSections.map((section) => {
+              const Icon = iconMap[section.icon] ?? FileText;
+              const isActive = activeSection === section.id;
+              const isAlwaysOn = ALWAYS_ON.has(section.id);
+              const isEnabled = isAlwaysOn || sectionToggles[section.id];
+
+              return (
+                <button
+                  key={`mobile-nav-${section.id}`}
+                  type="button"
+                  onClick={() => scrollToSection(section.id)}
+                  className={cn(
+                    "flex shrink-0 items-center gap-2 rounded-full border px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium transition-colors cursor-pointer",
+                    isActive
+                      ? "border-primary/50 bg-primary/15 text-primary"
+                      : "border-border/60 bg-surface/50 text-foreground/70 hover:bg-surface-muted hover:text-foreground",
+                    !isEnabled && "opacity-50"
+                  )}
+                >
+                  <Icon size={14} />
+                  {section.label}
+                </button>
+              );
+            })}
+          </nav>
+
           <div className="grid gap-6 xl:grid-cols-[280px_1fr_1fr]">
             {/* ── Section Navigation Sidebar ── */}
             <nav className="glass-panel hidden rounded-2xl p-3 xl:block sticky top-24 self-start print:hidden">

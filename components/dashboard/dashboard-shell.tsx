@@ -9,7 +9,6 @@ import {
   LogOut,
   Plus,
   Search,
-  SlidersHorizontal,
   X,
   Home,
   LayoutGrid,
@@ -45,8 +44,6 @@ function ResumeCardSkeleton() {
   );
 }
 
-type SortOption = "newest" | "oldest" | "name";
-
 export function DashboardShell() {
   const [collapsed, setCollapsed] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -54,8 +51,6 @@ export function DashboardShell() {
   const [activeTab, setActiveTab] = useState("overview");
   const [searchQuery, setSearchQuery] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
-  const [sortBy, setSortBy] = useState<SortOption>("newest");
-  const [sortOpen, setSortOpen] = useState(false);
   const { user, signOut } = useAuth();
 
   useEffect(() => {
@@ -122,24 +117,14 @@ export function DashboardShell() {
       );
     }
 
-    if (sortBy === "newest") {
-      result = [...result].sort(
-        (a, b) =>
-          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
-      );
-    } else if (sortBy === "oldest") {
-      result = [...result].sort(
-        (a, b) =>
-          new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime(),
-      );
-    } else if (sortBy === "name") {
-      result = [...result].sort((a, b) =>
-        a.title.localeCompare(b.title),
-      );
-    }
+    // Always sort by newest
+    result = [...result].sort(
+      (a, b) =>
+        new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
+    );
 
     return result;
-  }, [items, searchQuery, sortBy]);
+  }, [items, searchQuery]);
 
   // Overview: template gallery
   const renderOverview = () => (
@@ -350,39 +335,6 @@ export function DashboardShell() {
                   <span className="hidden sm:inline">Search</span>
                 </button>
               )}
-
-              {/* Sort */}
-              <div className="relative">
-                <button
-                  onClick={() => setSortOpen(!sortOpen)}
-                  className="inline-flex h-9 w-9 sm:h-11 sm:w-11 items-center justify-center rounded-xl border border-border/70 bg-surface/65 text-foreground/70 transition hover:border-primary/40 hover:text-foreground"
-                  aria-label="Sort resumes"
-                >
-                  <SlidersHorizontal size={14} />
-                </button>
-                {sortOpen && (
-                  <div className="absolute right-0 top-10 sm:top-12 z-20 w-36 sm:w-40 rounded-xl border border-border/70 bg-surface p-1.5 shadow-xl">
-                    {(
-                      [
-                        ["newest", "Newest first"],
-                        ["oldest", "Oldest first"],
-                        ["name", "By name"],
-                      ] as const
-                    ).map(([value, label]) => (
-                      <button
-                        key={value}
-                        onClick={() => {
-                          setSortBy(value);
-                          setSortOpen(false);
-                        }}
-                        className={`w-full rounded-lg px-3 py-2 text-left text-xs sm:text-sm transition ${sortBy === value ? "bg-primary/15 text-primary font-medium" : "text-foreground/70 hover:bg-surface-muted"}`}
-                      >
-                        {label}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
 
               <ThemeToggle />
 
