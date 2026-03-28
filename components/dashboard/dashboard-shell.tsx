@@ -11,6 +11,11 @@ import {
   Search,
   SlidersHorizontal,
   X,
+  Home,
+  LayoutGrid,
+  WandSparkles,
+  Shield,
+  Sparkles,
 } from "lucide-react";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
 import { ResumeCard } from "@/components/dashboard/resume-card";
@@ -271,23 +276,34 @@ export function DashboardShell() {
     </section>
   );
 
+  const isAdmin = user && ["absihekdas@gmail.com"].includes(user.email ?? "");
+
   return (
-    <div className="px-3 py-4 sm:px-4 sm:py-5 lg:px-6 xl:px-8">
+    <div className="px-3 py-4 pb-24 sm:px-4 sm:py-5 md:pb-5 lg:px-6 xl:px-8">
       <div className="mx-auto flex w-full gap-3 sm:gap-4">
-        <DashboardSidebar
-          collapsed={collapsed}
-          onToggle={() => setCollapsed((current) => !current)}
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-        />
+        {/* Sidebar for Desktop */}
+         <div className="hidden md:block shrink-0">
+          <DashboardSidebar
+            collapsed={collapsed}
+            onToggle={() => setCollapsed((current) => !current)}
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
+          />
+        </div>
 
         <main className="min-w-0 flex-1 rounded-2xl sm:rounded-3xl border border-border/75 bg-surface/55 p-3 sm:p-5 md:p-7 backdrop-blur">
           <header className="flex flex-col gap-3 border-b border-border/65 pb-4 sm:pb-6 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.24em] text-primary/80">
-                Dashboard
-              </p>
-              <h1 className="mt-1 sm:mt-2 font-display text-xl sm:text-2xl md:text-3xl tracking-tight text-foreground">
+              <div className="flex items-center gap-2">
+                <span className="md:hidden inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-primary/20 bg-primary/10 text-primary">
+                  <Sparkles size={12} />
+                </span>
+                <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.24em] text-primary/80">
+                  <span className="hidden md:inline">Dashboard</span>
+                  <span className="md:hidden tracking-[0.16em]">ResumeForge</span>
+                </p>
+              </div>
+              <h1 className="mt-2 sm:mt-2 font-display text-xl sm:text-2xl md:text-3xl tracking-tight text-foreground">
                 {activeTab === "overview"
                   ? "Resume workspace"
                   : activeTab === "resumes"
@@ -411,6 +427,40 @@ export function DashboardShell() {
           )}
         </main>
       </div>
+
+      {/* Mobile Bottom Navigation */}
+      <nav className="fixed inset-x-4 bottom-4 z-50 flex items-center justify-around rounded-2xl border border-border/60 bg-surface/90 p-2 shadow-2xl backdrop-blur-xl md:hidden">
+        <button
+          onClick={() => setActiveTab("overview")}
+          className={`flex w-16 flex-col items-center gap-1 rounded-xl py-2 transition ${activeTab === "overview" ? "bg-primary/15 text-primary" : "text-foreground/50 hover:bg-surface-muted hover:text-foreground/80"}`}
+        >
+          <Home size={18} />
+          <span className="text-[10px] font-medium">Overview</span>
+        </button>
+        <button
+          onClick={() => setActiveTab("resumes")}
+          className={`flex w-16 flex-col items-center gap-1 rounded-xl py-2 transition ${activeTab === "resumes" ? "bg-primary/15 text-primary" : "text-foreground/50 hover:bg-surface-muted hover:text-foreground/80"}`}
+        >
+          <LayoutGrid size={18} />
+          <span className="text-[10px] font-medium">Resumes</span>
+        </button>
+        <Link
+          href="/builder"
+          className="flex w-16 flex-col items-center gap-1 rounded-xl py-2 text-foreground/50 hover:bg-surface-muted hover:text-foreground/80 transition"
+        >
+          <WandSparkles size={18} />
+          <span className="text-[10px] font-medium">Builder</span>
+        </Link>
+        {isAdmin && (
+          <button
+            onClick={() => setActiveTab("admin")}
+            className={`flex w-16 flex-col items-center gap-1 rounded-xl py-2 transition ${activeTab === "admin" ? "bg-red-500/15 text-red-400" : "text-foreground/50 hover:bg-surface-muted hover:text-foreground/80"}`}
+          >
+            <Shield size={18} />
+            <span className="text-[10px] font-medium">Admin</span>
+          </button>
+        )}
+      </nav>
     </div>
   );
 }
