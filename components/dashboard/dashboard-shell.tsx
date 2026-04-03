@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Download,
@@ -51,7 +52,14 @@ export function DashboardShell() {
   const [activeTab, setActiveTab] = useState("overview");
   const [searchQuery, setSearchQuery] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
-  const { user, signOut } = useAuth();
+  const { user, loading: authLoading, signOut } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.replace("/");
+    }
+  }, [user, authLoading, router]);
 
   useEffect(() => {
     async function fetchResumes() {
@@ -265,6 +273,14 @@ export function DashboardShell() {
   );
 
   const isAdmin = user && ["absihekdas@gmail.com"].includes(user.email ?? "");
+
+  if (authLoading || !user) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+      </div>
+    );
+  }
 
   return (
     <div className="px-3 py-4 pb-24 sm:px-4 sm:py-5 md:pb-5 lg:px-6 xl:px-8">

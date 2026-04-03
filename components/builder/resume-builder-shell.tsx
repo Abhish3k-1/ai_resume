@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { useAuth } from "@/hooks/use-auth";
 import { useAutoSave } from "@/hooks/use-auto-save";
 import {
   resumeDefaultValues,
@@ -194,8 +195,17 @@ function AIGeneratingOverlay({ progress }: { progress: number }) {
 }
 
 export function ResumeBuilderShell() {
+  const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
+  
   const searchParams = useSearchParams();
   const initialId = searchParams.get("id");
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.replace("/");
+    }
+  }, [user, authLoading, router]);
 
   const methods = useForm<ResumeFormSchema>({
     resolver: zodResolver(resumeFormSchema),
@@ -573,6 +583,14 @@ export function ResumeBuilderShell() {
       }
     }
   }, [methods]);
+
+  if (authLoading || !user) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+      </div>
+    );
+  }
 
   return (
     <>
